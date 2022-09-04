@@ -911,6 +911,84 @@ impl BytesAdapter for Bytes {
     }
 }
 
+impl BytesAdapter for u8 {
+    fn len(&self) -> usize {
+        1
+    }
+
+    fn replace_with<B>(&mut self, mut buf: B)
+        where
+            B: Buf,
+    {
+        *self = buf.get_u8();
+    }
+
+    fn append_to<B>(&self, buf: &mut B)
+        where
+            B: BufMut,
+    {
+        buf.put_slice(&self.to_be_bytes())
+    }
+}
+
+impl BytesAdapter for u16 {
+    fn len(&self) -> usize {
+        2
+    }
+
+    fn replace_with<B>(&mut self, mut buf: B)
+        where
+            B: Buf,
+    {
+        *self = buf.get_u16();
+    }
+
+    fn append_to<B>(&self, buf: &mut B)
+        where
+            B: BufMut,
+    {
+        buf.put_slice(&self.to_be_bytes())
+    }
+}
+
+impl BytesAdapter for u32 {
+    fn len(&self) -> usize {
+        4
+    }
+
+    fn replace_with<B>(&mut self, mut buf: B)
+        where
+            B: Buf,
+    {
+        *self = buf.get_u32();
+    }
+
+    fn append_to<B>(&self, buf: &mut B)
+        where
+            B: BufMut,
+    {
+        buf.put_slice(&self.to_be_bytes())
+    }
+}
+impl BytesAdapter for u64 {
+    fn len(&self) -> usize {
+        8
+    }
+
+    fn replace_with<B>(&mut self, mut buf: B)
+        where
+            B: Buf,
+    {
+        *self = buf.get_u64();
+    }
+
+    fn append_to<B>(&self, buf: &mut B)
+        where
+            B: BufMut,
+    {
+        buf.put_slice(&self.to_be_bytes())
+    }
+}
 
 impl BytesAdapter for Vec<u8> {
     fn len(&self) -> usize {
