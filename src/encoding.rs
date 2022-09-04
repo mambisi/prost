@@ -873,33 +873,25 @@ pub mod string {
     }
 }
 
-pub trait BytesAdapter: sealed::BytesAdapter {}
+pub trait BytesAdapter: Default + Sized + 'static {
+    fn len(&self) -> usize;
 
-mod sealed {
-    use super::{Buf, BufMut};
-
-    pub trait BytesAdapter: Default + Sized + 'static {
-        fn len(&self) -> usize;
-
-        /// Replace contents of this buffer with the contents of another buffer.
-        fn replace_with<B>(&mut self, buf: B)
+    /// Replace contents of this buffer with the contents of another buffer.
+    fn replace_with<B>(&mut self, buf: B)
         where
             B: Buf;
 
-        /// Appends this buffer to the (contents of) other buffer.
-        fn append_to<B>(&self, buf: &mut B)
+    /// Appends this buffer to the (contents of) other buffer.
+    fn append_to<B>(&self, buf: &mut B)
         where
             B: BufMut;
 
-        fn is_empty(&self) -> bool {
-            self.len() == 0
-        }
+    fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 }
 
-impl BytesAdapter for Bytes {}
-
-impl sealed::BytesAdapter for Bytes {
+impl BytesAdapter for Bytes {
     fn len(&self) -> usize {
         Buf::remaining(self)
     }
@@ -919,9 +911,8 @@ impl sealed::BytesAdapter for Bytes {
     }
 }
 
-impl BytesAdapter for Vec<u8> {}
 
-impl sealed::BytesAdapter for Vec<u8> {
+impl BytesAdapter for Vec<u8> {
     fn len(&self) -> usize {
         Vec::len(self)
     }
